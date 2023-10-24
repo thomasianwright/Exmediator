@@ -9,7 +9,7 @@ namespace Exmediator.Services
         ValueTask<TResponse> SendAsync<TEvent, TResponse>(TEvent @event, CancellationToken cancellationToken = default)
             where TEvent : ICallbackEvent;
 
-        ValueTask PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
+        void Publish<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
             where TEvent : IEvent;
     }
 }

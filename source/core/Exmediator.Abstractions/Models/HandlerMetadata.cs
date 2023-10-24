@@ -20,6 +20,8 @@ namespace Exmediator.Models
             HandlerFullName = handlerFullName;
             HandlerType = handlerType;
             EventType = eventType;
+            
+            Initialize();
         }
 
         internal MethodInfo HandleAsyncMethod { get; set; }
@@ -30,14 +32,16 @@ namespace Exmediator.Models
             HandleAsyncMethod = HandlerType.GetMethod("HandleAsync", BindingFlags.Public | BindingFlags.Instance);
             HandleErrorAsyncMethod =
                 HandlerType.GetMethod("HandleErrorAsync", BindingFlags.Public | BindingFlags.Instance);
-
-            var typeHandlerInterfaces = HandlerType.GetInterfaces();
-
-            var callbackHandlerInterface = typeof(ICallbackHandler<,>).MakeGenericType(EventType, ResponseType);
-
-            if (HandlerType.IsGenericType && HandlerType.GetGenericTypeDefinition() == callbackHandlerInterface)
+            
+            var genericArguments = HandleAsyncMethod.GetGenericArguments();
+            
+            if (genericArguments.Length == 1)
             {
-                ResponseType = HandlerType.GetGenericArguments()[1];
+                ResponseType = typeof(Unit);
+            }
+            else if (genericArguments.Length == 2)
+            {
+                ResponseType = genericArguments[1];
             }
         }
     }

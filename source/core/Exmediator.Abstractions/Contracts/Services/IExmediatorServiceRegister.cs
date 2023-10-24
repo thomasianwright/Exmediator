@@ -3,7 +3,7 @@ using Exmediator.Enums;
 
 namespace Exmediator.Services
 {
-    internal interface IExmediatorServiceRegister
+    public interface IExmediatorServiceRegister
     {
         ExmediatorServiceLifetime DefaultLifetime { get; }
         
