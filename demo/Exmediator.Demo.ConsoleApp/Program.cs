@@ -1,4 +1,5 @@
 ﻿using Exmediator.Core.Factories;
+using Exmediator.Demo.ConsoleApp.Events.Notify;
 using Exmediator.Demo.ConsoleApp.Events.Test;
 using Exmediator.Demo.ConsoleApp.Services;
 using Exmediator.Enums;
@@ -13,9 +14,12 @@ var services = new ServiceCollection();
 var serviceRegister = new DemoExmediatorServiceRegister(services);
 var store = new ExmediatorTypeStore();
 store.Add(typeof(TestQuery), typeof(TestQueryHandler));
+store.Add(typeof(NotifyNotification), typeof(NotifyNotificationHandler));
 
 services.AddSingleton<IExmediatorTypeStore>(store);
+
 serviceRegister.Register(typeof(TestQueryHandler), ExmediatorServiceLifetime.Scoped);
+serviceRegister.Register(typeof(NotifyNotificationHandler), ExmediatorServiceLifetime.Scoped);
 services.AddScoped<IExmediatorServiceResolver, DemoIExmediatorServiceResolver>();
 services.AddScoped<IExmediator, Exmediator.Core.Services.Exmediator>();
 services.AddScoped<IHandlerActivatorFactory, HandlerActivatorFactory>();
@@ -29,5 +33,10 @@ var result = await exmediator.SendAsync<TestQuery, string>(new TestQuery()
 {
     TestString = "A pimp like slickback"
 }, CancellationToken.None);
+
+exmediator.Publish(new NotifyNotification()
+{
+    Message = "Hello World"
+});
 
 Console.WriteLine(result);
