@@ -10,6 +10,7 @@ namespace Exmediator.Stores
         void AddRange(IEnumerable<KeyValuePair<Type, Type>> pairs);
         HandlerMetadata TryGet(Type eventType);
         HandlerMetadata Get(Type eventType);
+        IList<Type> GetRegisteredTypes();
         bool Contains(Type eventType);
         void SetInitialized();
     }

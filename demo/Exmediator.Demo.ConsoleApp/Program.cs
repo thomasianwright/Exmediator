@@ -1,4 +1,5 @@
-﻿using Exmediator.Core.Factories;
+﻿using Exmediator.Core.Builders;
+using Exmediator.Core.Factories;
 using Exmediator.Demo.ConsoleApp.Events.Notify;
 using Exmediator.Demo.ConsoleApp.Events.Test;
 using Exmediator.Demo.ConsoleApp.Services;
@@ -10,20 +11,15 @@ using Exmediator.Stores;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
-
 var serviceRegister = new DemoExmediatorServiceRegister(services);
-var store = new ExmediatorTypeStore();
-store.Add(typeof(TestQuery), typeof(TestQueryHandler));
-store.Add(typeof(NotifyNotification), typeof(NotifyNotificationHandler));
 
-services.AddSingleton<IExmediatorTypeStore>(store);
-
-serviceRegister.Register(typeof(TestQueryHandler), ExmediatorServiceLifetime.Scoped);
-serviceRegister.Register(typeof(NotifyNotificationHandler), ExmediatorServiceLifetime.Scoped);
-services.AddScoped<IExmediatorServiceResolver, DemoIExmediatorServiceResolver>();
-services.AddScoped<IExmediator, Exmediator.Core.Services.Exmediator>();
-services.AddScoped<IHandlerActivatorFactory, HandlerActivatorFactory>();
-services.AddScoped<ITaskExecutor, DemoTaskExecutor>();
+new ExmediatorConfigurationBuilder()
+    .UseServiceRegister(serviceRegister)
+    .UseServiceResolver<DemoIExmediatorServiceResolver>()
+    .AddTaskExecutor<DemoTaskExecutor>()
+    .AddHandler<TestQuery, TestQueryHandler>()
+    .AddHandler<NotifyNotification, NotifyNotificationHandler>()
+    .Build();
 
 var serviceProvider = services.BuildServiceProvider();
 

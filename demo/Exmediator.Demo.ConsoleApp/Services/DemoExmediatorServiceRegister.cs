@@ -48,4 +48,21 @@ public class DemoExmediatorServiceRegister : IExmediatorServiceRegister
             _serviceCollection.AddSingleton(serviceType, implementationType);
         }
     }
+
+    public void Register(Type serviceType, object implementationInstance,
+        ExmediatorServiceLifetime lifetime = ExmediatorServiceLifetime.Transient)
+    {
+        if (lifetime == ExmediatorServiceLifetime.Transient)
+        {
+            _serviceCollection.AddTransient(serviceType, _ => implementationInstance);
+        }
+        else if (lifetime == ExmediatorServiceLifetime.Scoped)
+        {
+            _serviceCollection.AddScoped(serviceType, _ => implementationInstance);
+        }
+        else if (lifetime == ExmediatorServiceLifetime.Singleton)
+        {
+            _serviceCollection.AddSingleton(serviceType, _ => implementationInstance);
+        }
+    }
 }

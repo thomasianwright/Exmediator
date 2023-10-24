@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Exmediator.Exceptions;
 using Exmediator.Models;
 
@@ -54,6 +55,11 @@ namespace Exmediator.Stores
         public bool Contains(Type eventType)
         {
             return _store.ContainsKey(eventType.GetHashCode());
+        }
+        
+        public IList<Type> GetRegisteredTypes()
+        {
+            return _store.Select(handlerMetadata => handlerMetadata.Value.HandlerType).ToList();
         }
         
         public void SetInitialized()
