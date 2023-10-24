@@ -2,15 +2,15 @@
 
 namespace Exmediator.Demo.ConsoleApp.Events.Notify;
 
-public class NotifyNotificationHandler : INotificationHandler<NotifyNotification>
+public class NotifyNotificationHandler : NotificationHandler<NotifyNotification>
 {
-    public async ValueTask<Unit> HandleAsync(NotifyNotification notification, CancellationToken cancellationToken = default)
+    public override async ValueTask<Unit> HandleAsync(NotifyNotification notification, CancellationToken cancellationToken = default)
     {
         Console.WriteLine(notification.Message);
         return await ValueTask.FromResult(Unit.Value);
     }
 
-    public async ValueTask<Unit> HandleErrorAsync(NotifyNotification notification, Exception exception,
+    public override async ValueTask<Unit> HandleErrorAsync(NotifyNotification notification, Exception exception,
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine(exception.Message);
