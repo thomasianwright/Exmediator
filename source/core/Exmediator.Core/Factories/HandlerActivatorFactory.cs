@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Exmediator.Events;
 using Exmediator.Exceptions;
@@ -30,8 +31,16 @@ namespace Exmediator.Core.Factories
 
             var handler = _exmediatorServiceResolver.GetService(handlerMetadata.HandlerType);
 
-            return await (ValueTask<TResponse>)handlerMetadata.HandleAsyncMethod.Invoke(handler,
-                new object[] { @event, cancellationToken });
+            try
+            {
+                return await (ValueTask<TResponse>)handlerMetadata.HandleAsyncMethod.Invoke(handler,
+                    new object[] { @event, cancellationToken });
+            }
+            catch (Exception e)
+            {
+                return await (ValueTask<TResponse>)handlerMetadata.HandleErrorAsyncMethod.Invoke(handler,
+                    new object[] { @event, e, cancellationToken });
+            }
         }
 
         public async ValueTask<Unit> ActivateAsync<TEvent>(TEvent @event,
@@ -42,7 +51,14 @@ namespace Exmediator.Core.Factories
 
             var handler = _exmediatorServiceResolver.GetService(handlerMetadata.HandlerType);
 
-            await (ValueTask)handlerMetadata.HandleAsyncMethod.Invoke(handler, new object[] { @event, cancellationToken });
+            try
+            {
+                await (ValueTask)handlerMetadata.HandleAsyncMethod.Invoke(handler, new object[] { @event, cancellationToken });
+            }
+            catch (Exception e)
+            {
+                await (ValueTask)handlerMetadata.HandleErrorAsyncMethod.Invoke(handler, new object[] { @event, e, cancellationToken });
+            }
 
             return Unit.Value;
         }
